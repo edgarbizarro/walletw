@@ -1,17 +1,17 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "Laravel",
+        "title": "Wallet API",
         "version": "1.0.0",
         "description": "API para gerenciar carteiras financeiras com recursos de dep\u00f3sito, transfer\u00eancia e estorno."
     },
     "servers": [
         {
             "url": "http://localhost/api",
-            "description": "Live"
+            "description": "Local"
         },
         {
-            "url": "http://localhost",
+            "url": "https://domain.example/api",
             "description": "Prod"
         }
     ],
