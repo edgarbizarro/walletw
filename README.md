@@ -1,61 +1,266 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# API de Carteira Digital
 
-## About Laravel
+Uma API RESTful para gerenciamento de carteiras financeiras com funcionalidades de depósito, transferência e estorno de transações.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Funcionalidades Principais
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   Cadastro e autenticação de usuários
+    
+-   Gerenciamento de saldo da carteira
+    
+-   Depósito de fundos
+    
+-   Transferência para outros usuários
+    
+-   Estorno de transações
+    
+-   Histórico completo de transações
+    
+-   Processamento assíncrono para transferências grandes
+    
+-   Logs detalhados e monitoramento
+    
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requisitos Técnicos
 
-## Learning Laravel
+-   PHP 8.0+
+    
+-   Composer
+    
+-   MySQL 5.7+
+    
+-   Redis (opcional, para filas)
+    
+-   Laravel Sail (Docker)
+    
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Instalação Local
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Com Laravel Sail:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1.  Clone o repositório:
+    
+    ```
+    git clone https://github.com/edgarbizarro/walletw.git
+    cd wallet-api
+    
+    ```
+    
+2.  Instale as dependências usando o Sail:
+    
+    ```
+    ./vendor/bin/sail composer install
+    
+    ```
+    
+3.  Copie o arquivo de ambiente:
+    
+    ```
+    cp .env.example .env
+    
+    ```
+    
+4.  Gere a chave da aplicação:
+    
+    ```
+    ./vendor/bin/sail artisan key:generate
+    
+    ```
+    
+5.  Configure o banco de dados no arquivo `.env`:
+    
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=mysql # Nome do serviço no docker-compose.yml
+    DB_PORT=3306
+    DB_DATABASE=wallet
+    DB_USERNAME=wallet
+    DB_PASSWORD=secret
+    
+    ```
+    
+6.  Execute as migrações:
+    
+    ```
+    ./vendor/bin/sail artisan migrate
+    
+    ```
+    
+7.  Inicie o ambiente de desenvolvimento com Sail:
+    
+    ```
+    ./vendor/bin/sail up -d
+    
+    ```
+    
+8.  Instale as dependências frontend (se necessário):
+    
+    ```
+    ./vendor/bin/sail npm install
+    ./vendor/bin/sail npm run dev
+    
+    ```
+    
+9.  Acesse a aplicação em http://localhost
+    
 
-## Laravel Sponsors
+### Executando com Docker (Laravel Sail)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1.  Inicie o ambiente com Sail:
+    
+    ```
+    ./vendor/bin/sail up -d
+    
+    ```
+    
+2.  Execute as migrações:
+    
+    ```
+    ./vendor/bin/sail artisan migrate
+    
+    ```
+    
+3.  Acesse a API em http://localhost
+    
 
-### Premium Partners
+## Testando a Aplicação
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+Execute os testes com Sail:
 
-## Contributing
+```
+./vendor/bin/sail artisan test
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
 
-## Code of Conduct
+## Documentação da API
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1.  Gere a documentação da API:
+    
+    ```
+    ./vendor/bin/sail artisan apidoc:generate
+    
+    ```
+    
+2.  Acesse a documentação em `/docs` após iniciar o servidor.
+    
 
-## Security Vulnerabilities
+## Monitoramento
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Acesse o Telescope em `/telescope` para monitoramento de requisições e depuração.
 
-## License
+## Endpoints da API
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Autenticação
+
+-   `POST /api/register` - Cadastra um novo usuário
+    
+-   `POST /api/login` - Autentica um usuário
+    
+-   `POST /api/logout` - Encerra a sessão (requer autenticação)
+    
+
+### Carteira (requer autenticação)
+
+-   `POST /api/wallet/deposit` - Realiza um depósito
+    
+-   `POST /api/wallet/transfer` - Transfere fundos para outro usuário
+    
+-   `POST /api/wallet/reverse/{transaction}` - Estorna uma transação
+    
+-   `GET /api/wallet/balance` - Consulta o saldo atual
+    
+-   `GET /api/wallet/transactions` - Lista o histórico de transações
+    
+
+## Exemplo de Uso
+
+1.  Registre um novo usuário:
+    
+    ```
+    curl -X POST http://localhost/api/register \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "João Silva",
+        "email": "joao@example.com",
+        "password": "senhaSegura123",
+        "password_confirmation": "senhaSegura123",
+        "document": "12345678901",
+        "type": "individual"
+      }'
+    
+    ```
+    
+2.  Autentique-se:
+    
+    ```
+    curl -X POST http://localhost/api/login \
+      -H "Content-Type: application/json" \
+      -d '{
+        "email": "joao@example.com",
+        "password": "senhaSegura123"
+      }'
+    
+    ```
+    
+3.  Faça um depósito:
+    
+    ```
+    curl -X POST http://localhost/api/wallet/deposit \
+      -H "Authorization: Bearer <seu_token>" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "amount": 100.50,
+        "description": "Salário"
+      }'
+    
+    ```
+    
+4.  Consulte o saldo:
+    
+    ```
+    curl -X GET http://localhost/api/wallet/balance \
+      -H "Authorization: Bearer <seu_token>"
+    
+    ```
+    
+
+## Logs
+
+Os logs são armazenados em formato JSON em `storage/logs/laravel.log` e incluem:
+
+-   Todas as requisições à API
+    
+-   Erros e exceções
+    
+-   Eventos importantes do sistema
+    
+
+## Observabilidade
+
+O Laravel Telescope fornece um painel completo para monitoramento em `/telescope` com:
+
+-   Requisições HTTP
+    
+-   Consultas ao banco de dados
+    
+-   Jobs em fila
+    
+-   Eventos
+    
+-   Exceções
+    
+-   Logs
+    
+
+## Considerações de Segurança
+
+-   Todas as rotas de carteira requerem autenticação via token Bearer
+    
+-   Senhas são armazenadas usando bcrypt
+    
+-   Transações são validadas para evitar saldo negativo
+    
+-   Transferências grandes são processadas assincronamente
+    
+-   Todas as operações são registradas em log para auditoria
