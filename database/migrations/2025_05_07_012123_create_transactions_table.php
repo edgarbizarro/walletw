@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('type', ['deposit', 'transfer', 'reversal']);
             $table->string('amount')->default(0);
