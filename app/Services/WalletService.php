@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Transactions;
 use App\Models\Wallets;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\Transactions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WalletService
 {
@@ -69,53 +71,97 @@ class WalletService
 
     public function reverseTransaction(Transactions $transaction): Transactions
     {
+        // Verifica se a transação pode ser revertida
+        if (!in_array($transaction->type, ['deposit', 'transfer'])) {
+            throw new \Exception('Este tipo de transação não pode ser revertido');
+        }
+
+        if ($transaction->status !== 'completed') {
+            throw new \Exception('Apenas transações completadas podem ser revertidas');
+        }
+
+        if ($transaction->status === 'reversed') {
+            throw new \Exception('Esta transação já foi revertida');
+        }
+
         return DB::transaction(function () use ($transaction) {
-            if ($transaction->status === 'reversed') {
-                throw new \Exception('Transação já estornada');
-            }
 
             $reversalAmount = $transaction->amount;
 
-            // Create reversal transaction
+            // Cria a transação de reversão
             $reversalTransaction = $transaction->user->transactions()->create([
                 'id' => Str::uuid(),
                 'type' => 'reversal',
                 'amount' => $reversalAmount,
-                'description' => "Transação estornada {$transaction->id}",
+                'description' => "Estorno da transação {$transaction->id}",
                 'status' => 'completed',
                 'related_transaction_id' => $transaction->id,
             ]);
 
-            // Handle different transaction types
-            if ($transaction->type === 'deposit') {
-                $transaction->user->wallet->decrement('balance', $reversalAmount);
-            } elseif ($transaction->type === 'transfer') {
-                // Return money to sender
-                $transaction->user->wallet->increment('balance', $reversalAmount);
+            // Lógica de reversão baseada no tipo de transação original
+            switch ($transaction->type) {
+                case 'deposit':
+                    // Reverte um depósito: subtrai o valor da carteira
+                    $transaction->user->wallet->decrement('balance', $reversalAmount);
+                    break;
 
-                // Deduct from recipient if exists
-                if ($transaction->to_user_id) {
-                    $recipient = User::find($transaction->to_user_id);
-                    if ($recipient) {
-                        $recipient->wallet->decrement('balance', $reversalAmount);
+                case 'transfer':
+                    // Reverte uma transferência: devolve o valor ao remetente
+                    $transaction->user->wallet->increment('balance', $reversalAmount);
 
-                        // Record the reversal for recipient
-                        $recipient->transactions()->create([
-                            'id' => Str::uuid(),
-                            'type' => 'reversal',
-                            'amount' => $reversalAmount,
-                            'description' => "Transferência estornada de {$transaction->user->name}",
-                            'status' => 'completed',
-                            'related_transaction_id' => $transaction->id,
-                        ]);
+                    // Se houver destinatário, subtrai o valor dele
+                    if ($transaction->to_user_id) {
+                        $recipient = User::find($transaction->to_user_id);
+                        if ($recipient && $recipient->wallet) {
+                            $recipient->wallet->decrement('balance', $reversalAmount);
+
+                            // Cria registro de reversão para o destinatário
+                            $recipient->transactions()->create([
+                                'id' => Str::uuid(),
+                                'type' => 'reversal',
+                                'amount' => $reversalAmount,
+                                'description' => "Estorno de transferência de {$transaction->user->name}",
+                                'status' => 'completed',
+                                'related_transaction_id' => $transaction->id,
+                            ]);
+                        }
                     }
-                }
+                    break;
+
+                default:
+                    throw new \Exception('Tipo de transação não suportado para reversão');
             }
 
-            // Mark original transaction as reversed
+            // Atualiza o status da transação original
             $transaction->update(['status' => 'reversed']);
 
             return $reversalTransaction;
         });
+    }
+
+    public function reverse(Request $request, $transactionId)
+    {
+        $user = Auth::user();
+
+        // Busca a transação onde o usuário é o remetente ou destinatário
+        $transaction = Transactions::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('to_user_id', $user->id);
+        })
+            ->findOrFail($transactionId);
+
+        try {
+            $reversalTransaction = $this->walletService->reverseTransaction($transaction);
+
+            return response()->json([
+                'message' => 'Transação revertida com sucesso',
+                'reversal_transaction' => $reversalTransaction,
+                'new_balance' => $user->wallet->fresh()->balance,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao reverter transação: ' . $e->getMessage()
+            ], 422);
+        }
     }
 }
