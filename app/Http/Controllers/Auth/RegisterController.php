@@ -9,8 +9,41 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Wallets;
 
+/**
+ * @group Authentication
+ *
+ * Endpoints for user registration and authentication
+ */
 class RegisterController extends Controller
 {
+    /**
+     * Register a new user
+     *
+     * @bodyParam name string required The name of the user. Example: John Doe
+     * @bodyParam email string required The email of the user. Example: john@example.com
+     * @bodyParam password string required The password (min: 8 characters). Example: secret123
+     * @bodyParam password_confirmation string required The password confirmation. Example: secret123
+     * @bodyParam document string required The user's document (CPF/CNPJ). Example: 12345678901
+     * @bodyParam type string required The user type (individual or business). Example: individual
+     *
+     * @response 200 {
+     *   "access_token": "token_value",
+     *   "token_type": "Bearer",
+     *   "user": {
+     *     "id": 1,
+     *     "name": "John Doe",
+     *     "email": "john@example.com",
+     *     "document": "12345678901",
+     *     "type": "individual"
+     *   }
+     * }
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "email": ["The email has already been taken."]
+     *   }
+     * }
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -22,7 +55,7 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->api($validator->errors(), 422);
         }
 
         $user = User::create([
@@ -38,10 +71,10 @@ class RegisterController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
+        return response()->api([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $user->toArray()
         ]);
     }
 }
