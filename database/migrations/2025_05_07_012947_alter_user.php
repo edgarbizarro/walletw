@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->enum('type', ['individual', 'business'])->default('individual');
-            $table->enum('document', ['cpf', 'cnpj'])->default('cpf');
+            $table->string('document');
         });
     }
 
