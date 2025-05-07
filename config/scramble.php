@@ -37,7 +37,7 @@ return [
         /*
          * Define the title of the documentation's website. App name is used when this config is `null`.
          */
-        'title' => null,
+        'title' => 'Wallet API',
 
         /*
          * Define the theme of the documentation. Available options are `light` and `dark`.
@@ -90,8 +90,8 @@ return [
      * ```
      */
     'servers' => [
-          'Live' => 'api',
-          'Prod' => env('APP_URL', 'http://localhost:8000'),
+          'Local' => 'api',
+          'Prod' => 'https://domain.example/api',
 
     ],
 
