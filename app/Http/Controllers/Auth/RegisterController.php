@@ -55,7 +55,7 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->api($validator->errors(), 422);
+            return response()->json($validator->errors(), 422);
         }
 
         $user = User::create([
@@ -71,7 +71,7 @@ class RegisterController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->api([
+        return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user->toArray()

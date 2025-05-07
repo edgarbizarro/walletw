@@ -181,7 +181,7 @@ class WalletController extends Controller
      */
     public function balance()
     {
-        return response()->api([
+        return response()->json([
             'balance' => auth()->user()->wallet->balance
         ]);
     }
