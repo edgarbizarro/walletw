@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Middleware\CheckNegativeBalance;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -22,5 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reverse/{transaction}', [WalletController::class, 'reverse']);
         Route::get('/balance', [WalletController::class, 'balance']);
         Route::get('/transactions', [WalletController::class, 'transactions']);
-    });
+    })->middleware(CheckNegativeBalance::class);
 });

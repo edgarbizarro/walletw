@@ -12,6 +12,10 @@ class WalletService
 {
     public function deposit(User $user, float $amount, string $description = null): Transaction
     {
+        if ($user->wallet->balance < 0) {
+            throw new \Exception('Não é possível depositar em conta com saldo negativo');
+        }
+
         return DB::transaction(function () use ($user, $amount, $description) {
             $transaction = $user->transactions()->create([
                 'id' => Str::uuid(),
@@ -32,7 +36,7 @@ class WalletService
         return DB::transaction(function () use ($sender, $recipient, $amount, $description) {
             // Check if sender has sufficient balance
             if ($sender->wallet->balance < $amount) {
-                throw new \Exception('Insufficient balance');
+                throw new \Exception('Saldo insuficiente');
             }
 
             // Create transfer transaction for sender
@@ -50,7 +54,7 @@ class WalletService
                 'id' => Str::uuid(),
                 'type' => 'deposit',
                 'amount' => $amount,
-                'description' => "Transfer from {$sender->name}",
+                'description' => "Transferido para {$sender->name}",
                 'status' => 'completed',
                 'related_transaction_id' => $transferTransaction->id,
             ]);
@@ -67,7 +71,7 @@ class WalletService
     {
         return DB::transaction(function () use ($transaction) {
             if ($transaction->status === 'reversed') {
-                throw new \Exception('Transaction already reversed');
+                throw new \Exception('Transação já revertida');
             }
 
             $reversalAmount = $transaction->amount;
@@ -77,7 +81,7 @@ class WalletService
                 'id' => Str::uuid(),
                 'type' => 'reversal',
                 'amount' => $reversalAmount,
-                'description' => "Reversal of transaction {$transaction->id}",
+                'description' => "Transação revertida {$transaction->id}",
                 'status' => 'completed',
                 'related_transaction_id' => $transaction->id,
             ]);
@@ -100,7 +104,7 @@ class WalletService
                             'id' => Str::uuid(),
                             'type' => 'reversal',
                             'amount' => $reversalAmount,
-                            'description' => "Reversal of transfer from {$transaction->user->name}",
+                            'description' => "Reversão de transferência de {$transaction->user->name}",
                             'status' => 'completed',
                             'related_transaction_id' => $transaction->id,
                         ]);
