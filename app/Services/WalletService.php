@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class WalletService
 {
-    public function deposit(User $user, float $amount, string $description = null): Transaction
+    public function deposit(User $user, float $amount, string $description = null): Transactions
     {
         if ($user->wallet->balance < 0) {
             throw new \Exception('Não é possível depositar em conta com saldo negativo');
@@ -71,7 +71,7 @@ class WalletService
     {
         return DB::transaction(function () use ($transaction) {
             if ($transaction->status === 'reversed') {
-                throw new \Exception('Transação já revertida');
+                throw new \Exception('Transação já estornada');
             }
 
             $reversalAmount = $transaction->amount;
@@ -81,7 +81,7 @@ class WalletService
                 'id' => Str::uuid(),
                 'type' => 'reversal',
                 'amount' => $reversalAmount,
-                'description' => "Transação revertida {$transaction->id}",
+                'description' => "Transação estornada {$transaction->id}",
                 'status' => 'completed',
                 'related_transaction_id' => $transaction->id,
             ]);
@@ -104,7 +104,7 @@ class WalletService
                             'id' => Str::uuid(),
                             'type' => 'reversal',
                             'amount' => $reversalAmount,
-                            'description' => "Reversão de transferência de {$transaction->user->name}",
+                            'description' => "Transferência estornada de {$transaction->user->name}",
                             'status' => 'completed',
                             'related_transaction_id' => $transaction->id,
                         ]);
