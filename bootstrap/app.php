@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->add(App\Http\Middleware\CheckNegativeBalance::class);
+        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
