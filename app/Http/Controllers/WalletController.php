@@ -153,15 +153,19 @@ class WalletController extends Controller
     public function reverse(Request $request, $transactionId)
     {
         $user = Auth::user();
-        $transaction = Transactions::where('user_id', $user->id)
-            ->orWhere('to_user_id', $user->id)
+        
+        // Busca a transação onde o usuário é o remetente OU o destinatário
+        $transaction = Transactions::where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhere('to_user_id', $user->id);
+            })
             ->findOrFail($transactionId);
 
         try {
             $reversalTransaction = $this->walletService->reverseTransaction($transaction);
 
             return response()->json([
-                'message' => 'Transacao revertida com sucesso',
+                'message' => 'Transação estornada com sucesso',
                 'reversal_transaction' => $reversalTransaction,
                 'new_balance' => $user->wallet->fresh()->balance,
             ]);

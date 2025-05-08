@@ -78,18 +78,20 @@ class WalletApiTest extends TestCase
         $user->wallet()->create(['balance' => 100]);
         Sanctum::actingAs($user);
 
+        // Primeiro faz um depósito
         $deposit = $this->postJson('/api/wallet/deposit', [
             'amount' => 50,
-            'description' => 'Teste deposito'
+            'description' => 'Test deposit'
         ]);
 
         $transactionId = $deposit->json('transaction.id');
 
+        // Agora tenta reverter
         $response = $this->postJson("/api/wallet/reverse/{$transactionId}");
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Transacao estornada com sucesso',
+                'message' => 'Transação estornada com sucesso',
                 'new_balance' => 100,
             ]);
     }
