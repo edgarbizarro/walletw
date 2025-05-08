@@ -1,266 +1,186 @@
 
-# API de Carteira Digital
+  
 
-Uma API RESTful para gerenciamento de carteiras financeiras com funcionalidades de depósito, transferência e estorno de transações.
+# 💳Wallet API
 
-## Funcionalidades Principais
+  
 
--   Cadastro e autenticação de usuários
-    
--   Gerenciamento de saldo da carteira
-    
--   Depósito de fundos
-    
--   Transferência para outros usuários
-    
--   Estorno de transações
-    
--   Histórico completo de transações
-    
--   Processamento assíncrono para transferências grandes
-    
--   Logs detalhados e monitoramento
-    
+Uma API RESTful para gerenciar carteiras digitais, incluindo funcionalidades de depósito, transferência e reversão de transações.
 
-## Requisitos Técnicos
+  
 
--   PHP 8.0+
-    
--   Composer
-    
--   MySQL 5.7+
-    
--   Redis (opcional, para filas)
-    
--   Laravel Sail (Docker)
-    
+## 📦 Funcionalidades
 
-## Instalação Local
+  
+✅ Registro e autenticação de usuários
+✅ Gerenciamento do saldo da carteira
+✅ Depositar fundos na carteira
+✅ Transferir fundos entre usuários
+✅ Reversão de transações
+✅ Histórico completo de transações
+✅ Processamento assíncrono para transferências de grande valor
+✅ Registros detalhados e observabilidade com o Laravel Telescope
 
-Com Laravel Sail:
+  
 
-1.  Clone o repositório:
-    
-    ```
-    git clone https://github.com/edgarbizarro/walletw.git
-    cd wallet-api
-    
-    ```
-    
-2.  Instale as dependências usando o Sail:
-    
-    ```
-    ./vendor/bin/sail composer install
-    
-    ```
-    
-3.  Copie o arquivo de ambiente:
-    
-    ```
-    cp .env.example .env
-    
-    ```
-    
-4.  Gere a chave da aplicação:
-    
-    ```
-    ./vendor/bin/sail artisan key:generate
-    
-    ```
-    
-5.  Configure o banco de dados no arquivo `.env`:
-    
-    ```
-    DB_CONNECTION=mysql
-    DB_HOST=mysql # Nome do serviço no docker-compose.yml
-    DB_PORT=3306
-    DB_DATABASE=wallet
-    DB_USERNAME=wallet
-    DB_PASSWORD=secret
-    
-    ```
-    
-6.  Execute as migrações:
-    
-    ```
-    ./vendor/bin/sail artisan migrate
-    
-    ```
-    
-7.  Inicie o ambiente de desenvolvimento com Sail:
-    
-    ```
-    ./vendor/bin/sail up -d
-    
-    ```
-    
-8.  Instale as dependências frontend (se necessário):
-    
-    ```
-    ./vendor/bin/sail npm install
-    ./vendor/bin/sail npm run dev
-    
-    ```
-    
-9.  Acesse a aplicação em http://localhost
-    
+## 🧰 Tecnologias
+  
 
-### Executando com Docker (Laravel Sail)
+- PHP 8.2 - 8.4
+- Laravel 12
+- MySQL 5.7+
+- Laravel Sail (Docker)
+- Tailwind
 
-1.  Inicie o ambiente com Sail:
-    
-    ```
-    ./vendor/bin/sail up -d
-    
-    ```
-    
-2.  Execute as migrações:
-    
-    ```
-    ./vendor/bin/sail artisan migrate
-    
-    ```
-    
-3.  Acesse a API em http://localhost
-    
+  
 
-## Testando a Aplicação
+## 🛠️ Instruções para Execução
 
-Execute os testes com Sail:
+  
 
+### 🛟 Pré-requisitos
+
+- Docker
+
+- Composer
+
+  
+
+### 🔧Instalação
+
+``` 
+git clone  https://github.com/edgarbizarro/walletw.git
+``` 
+``` 
+cd walletw 
+```
+
+### 🔧Instalar dependências
+
+```
+composer install
+```
+
+> Entretanto, em vez de digitar repetidamente vendor/bin/sail para executar comandos do Sail, você pode configurar um alias de shell que permita executar os comandos do Sail mais facilmente:
+`` alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)' ``
+
+  
+
+### 🔧 Criar arquivo .env
+``` 
+cp .env.example .env
+``` 
+
+
+### 🔧 Gerar chave de aplicação
+```
+./vendor/bin/sail artisan key:generate
+```
+  
+
+### 🔧 Configure DB in .env file
+```
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=walletw
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+
+### 🔧 Inicie a aplicação
+```
+./vendor/bin/sail up -d
+```
+   
+### 🔧 Executar as migrations
+```
+./vendor/bin/sail artisan migrate
+```
+A aplicação estará disponível em: http://localhost
+ 
+### Opcional: Compilar o front-end
+```
+./vendor/bin/sail npm install
+```
+```
+./vendor/bin/sail npm run dev
+```
+
+
+### 🧪 Testes
 ```
 ./vendor/bin/sail artisan test
-
 ```
 
-## Documentação da API
+  
 
-1.  Gere a documentação da API:
-    
-    ```
-    ./vendor/bin/sail artisan apidoc:generate
-    
-    ```
-    
-2.  Acesse a documentação em `/docs` após iniciar o servidor.
-    
+## 📘 Documentação da API
 
-## Monitoramento
+  
 
-Acesse o Telescope em `/telescope` para monitoramento de requisições e depuração.
+Gerar e acessar documentação da API:
+```
+./vendor/bin/sail artisan scramble:export
+```
 
-## Endpoints da API
+Em seguida, abra no seu navegador http://localhost/docs/api 
+>A documentação já esta gerada por padrão 😉
 
-### Autenticação
+  
 
--   `POST /api/register` - Cadastra um novo usuário
-    
--   `POST /api/login` - Autentica um usuário
-    
--   `POST /api/logout` - Encerra a sessão (requer autenticação)
-    
+## 🔐 Autenticação
 
-### Carteira (requer autenticação)
+| Método | Endpoint | Descrição |
+|--|--| -- |
+| POST  | `/api/register` | Registrar novo usuário |
+| POST  | `/api/login` | Autenticar usuário |
+| POST  | `/api/logout` | Deslogar usuário |
 
--   `POST /api/wallet/deposit` - Realiza um depósito
-    
--   `POST /api/wallet/transfer` - Transfere fundos para outro usuário
-    
--   `POST /api/wallet/reverse/{transaction}` - Estorna uma transação
-    
--   `GET /api/wallet/balance` - Consulta o saldo atual
-    
--   `GET /api/wallet/transactions` - Lista o histórico de transações
-    
+  
 
-## Exemplo de Uso
+## 💰 Wallet (Requer autenticação)  
 
-1.  Registre um novo usuário:
-    
-    ```
-    curl -X POST http://localhost/api/register \
-      -H "Content-Type: application/json" \
-      -d '{
-        "name": "João Silva",
-        "email": "joao@example.com",
-        "password": "senhaSegura123",
-        "password_confirmation": "senhaSegura123",
-        "document": "12345678901",
-        "type": "individual"
-      }'
-    
-    ```
-    
-2.  Autentique-se:
-    
-    ```
-    curl -X POST http://localhost/api/login \
-      -H "Content-Type: application/json" \
-      -d '{
-        "email": "joao@example.com",
-        "password": "senhaSegura123"
-      }'
-    
-    ```
-    
-3.  Faça um depósito:
-    
-    ```
-    curl -X POST http://localhost/api/wallet/deposit \
-      -H "Authorization: Bearer <seu_token>" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "amount": 100.50,
-        "description": "Salário"
-      }'
-    
-    ```
-    
-4.  Consulte o saldo:
-    
-    ```
-    curl -X GET http://localhost/api/wallet/balance \
-      -H "Authorization: Bearer <seu_token>"
-    
-    ```
-    
+| Método | Endpoint | Descrição |
+|--|--| -- |
+| POST  | `/api/wallet/deposit` | Depositar fundos |
+| POST  | `/api/wallet/transfer` | Transferir para outro usuário |
+| POST  | `/api/wallet/reverse/{id}` | Reverter uma transação |
+| GET | `/api/wallet/balance` | Verificar saldo da carteira |
+| GET | `/api/wallet/transactions` | Verificar saldo da carteira |
 
-## Logs
+## 📚 Documentação
 
-Os logs são armazenados em formato JSON em `storage/logs/laravel.log` e incluem:
+-   Documentação interativa via  `/api/docs`    
+-   Especificação OpenAPI 3.0 gerada automaticamente    
+-   Exemplos de requisições/respostas
 
--   Todas as requisições à API
-    
--   Erros e exceções
-    
--   Eventos importantes do sistema
-    
+## 📊 Monitoramento
 
-## Observabilidade
+O Laravel Telescope está disponível em `/telescope` e fornece: 
 
-O Laravel Telescope fornece um painel completo para monitoramento em `/telescope` com:
+- Logs de requisições
+- Consultas ao banco de dados
+- Eventos, exceções e logs
 
--   Requisições HTTP
-    
--   Consultas ao banco de dados
-    
--   Jobs em fila
-    
--   Eventos
-    
--   Exceções
-    
--   Logs
-    
+## ⚙️ Arquitetura
 
-## Considerações de Segurança
+-   **Padrão em Camadas**  (Controller → Service → Repository)
+-   **Transações Atômicas**  (Garantia de consistência)    
+-   **UUID**  para identificação segura de transações
+  
 
--   Todas as rotas de carteira requerem autenticação via token Bearer
-    
--   Senhas são armazenadas usando bcrypt
-    
--   Transações são validadas para evitar saldo negativo
-    
--   Transferências grandes são processadas assincronamente
-    
--   Todas as operações são registradas em log para auditoria
+## 🛡️ Segurança
+
+-   Autenticação via token (Sanctum)    
+-   Bloqueio de operações com saldo negativo    
+-   Validação rigorosa em todas as operações    
+-   Logs estruturados para auditoria
+
+  
+
+---
+
+>"Uma solução robusta para gestão financeira pessoal, construída com as melhores práticas de desenvolvimento moderno."
+  
+
+Desenvolvido por Edgar Bizarro
