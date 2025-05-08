@@ -13,12 +13,19 @@ Uma API RESTful para gerenciar carteiras digitais, incluindo funcionalidades de 
 
   
 ✅ Registro e autenticação de usuários
+
 ✅ Gerenciamento do saldo da carteira
+
 ✅ Depositar fundos na carteira
+
 ✅ Transferir fundos entre usuários
+
 ✅ Reversão de transações
+
 ✅ Histórico completo de transações
+
 ✅ Processamento assíncrono para transferências de grande valor
+
 ✅ Registros detalhados e observabilidade com o Laravel Telescope
 
   
