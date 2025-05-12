@@ -138,11 +138,48 @@ Em seguida, abra no seu navegador http://localhost/docs/api
 ## 🔐 Autenticação
 
 | Método | Endpoint | Descrição |
-|--|--| -- |
-| POST  | `/api/register` | Registrar novo usuário |
-| POST  | `/api/login` | Autenticar usuário |
-| POST  | `/api/logout` | Deslogar usuário |
+|--|--|--|
+| POST  | `/api/register` | Registrar novo usuário | 
 
+
+```curl
+curl --location 'http://localhost/api/register' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "name": "John Doe",
+  "email": "john@doe.com",
+  "password": "123123123",
+  "document": "12312312321",
+  "type": "individual",
+  "password_confirmation": "123123123"
+}'
+```
+
+| Método | Endpoint | Descrição |
+|--|--|--|
+| POST  | `/api/login` | Autenticar usuário 
+ 
+```curl
+curl --location 'http://localhost/api/login' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "john@doe.com",
+  "password": "123123123",
+}'
+```
+
+| Método | Endpoint | Descrição |
+|--|--|--|
+| POST  | `/api/logout` | Deslogar usuário | 
+ 
+```curl
+curl --location --request POST 'http://localhost/api/logout' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {seu_token}'
+```
   
 
 ## 💰 Wallet (Requer autenticação)  
@@ -150,10 +187,61 @@ Em seguida, abra no seu navegador http://localhost/docs/api
 | Método | Endpoint | Descrição |
 |--|--| -- |
 | POST  | `/api/wallet/deposit` | Depositar fundos |
+
+```curl
+curl --location 'http://localhost/api/wallet/deposit' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {seu_token}\
+--data '{
+  "amount": 1.09,
+  "description": "string"
+}'
+```
+
+| Método | Endpoint | Descrição |
+|--|--| -- |
 | POST  | `/api/wallet/transfer` | Transferir para outro usuário |
+```curl
+curl --location 'http://localhost/api/wallet/transfer' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {seu_token} \
+--data '{
+  "amount": 0.10,
+  "recipient_id": 2,
+  "description": "string"
+}'
+```
+
+
+| Método | Endpoint | Descrição |
+|--|--| -- |
 | POST  | `/api/wallet/reverse/{id}` | Reverter uma transação |
-| GET | `/api/wallet/balance` | Verificar saldo da carteira |
+```curl
+curl --location --request POST 'http://localhost/api/wallet/reverse/{transaction_id}' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {seu_token}'
+```
+
+| Método | Endpoint | Descrição |
+|--|--| -- |
+| GET | `/api/wallet/balance` | Recupere o saldo atual da carteira |
+```curl
+curl --location 'http://localhost/api/wallet/balance' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {seu_token}'
+```
+
+| Método | Endpoint | Descrição |
+|--|--| -- |
 | GET | `/api/wallet/transactions` | Verificar saldo da carteira |
+```curl
+curl --location 'http://localhost/api/wallet/transactions' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {seu_token}'
+```
 
 ## 📚 Documentação
 
